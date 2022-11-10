@@ -3,6 +3,7 @@ import e from "express";
 import chatrouter from './routes/chats.router.js';
 import grouprouter from './routes/chats.router.js';
 import connectrouter from './routes/connect.router.js';
+import usersrouter from './routes/users.router.js';
 import mongoose from 'mongoose';
 
 dotenv.config()
@@ -25,9 +26,8 @@ app
     .use('/api/v1/chats', chatrouter)
     .use('/api/v1/groups', grouprouter)
     .use('/api/v1/connect', connectrouter)
+    .use('/api/v1/users', usersrouter)
 
-const listernning = app.listen(process.env.PORT || 3000, () => {
-    console.log(`Serveur en écoute sur le port ${listernning.address().port}`);
-})
+
 
 export default app;

@@ -1,48 +1,49 @@
 import { Schema, Types } from "mongoose";
 
-export const userRefenceSchema = new Schema({
-    id: Types.ObjectId,
-    nom: String,
-    username: String,
-    image: String,
-    uri: String
-})
 
-export const chatReferenceSchema = new Schema({
-    user: userRefenceSchema,
-    id: Types.ObjectId,
-    code: String
-});
-
-export const groupReferenceSchema = new Schema({
-    id: Types.ObjectId,
-    code: String,
-    users: [userRefenceSchema]
-})
-
-export const userTokkenSchema = new Schema({
-    content: String,
-    default: new Date(Date.now() + 1000 * 60 * 60 * 24)
-})
 
 export const userSchema = new Schema({
-    id: Types.ObjectId,
     nom: String,
     prenom: String,
-    username: String,
-    password: String,
+    username: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
     uri: String,
     image: String,
-    tokkens: [userTokken],
-    groupes: [groupReferenceSchema],
-    conversations: [chatReferenceSchema]
+    tokkens: [{
+        content: String,
+        time: {
+            type: Date,
+            default: new Date(Date.now() + 1000 * 60 * 60 * 24)
+        }
+    }],
+    groupes: [{
+        type: Types.ObjectId,
+        ref: 'groups'
+    }],
+    conversations: [{
+        type: Types.ObjectId,
+        ref: 'conversations'
+    }]
 })
 
+
 export const groupeMessageSchema = new Schema({
-    sender: userRefenceSchema,
+    sender: {
+        type: Types.ObjectId,
+        ref: 'users'
+    },
     content: String,
     genre: String,
-    readby: [userRefenceSchema],
+    readby: [{
+        type: Types.ObjectId,
+        ref: 'users'
+    }],
     time: {
         type: Date,
         default: new Date()
@@ -50,9 +51,11 @@ export const groupeMessageSchema = new Schema({
 })
 
 export const groupSchema = new Schema({
-    id: Types,
     code: String,
-    membres: [userRefenceSchema],
+    membres: [{
+        type: Types.ObjectId,
+        ref: 'users'
+    }],
     latest: {
         type: Date,
         default: new Date()
@@ -60,21 +63,37 @@ export const groupSchema = new Schema({
     chats: [groupeMessageSchema]
 });
 
+
 export const chatMessageSchema = new Schema({
-    sender: userRefenceSchema,
+    sender: {
+        type: Types.ObjectId,
+        ref: 'users'
+    },
     content: String,
-    genre: String,
-    read: Boolean,
+    genre: {
+        type: String,
+        default: 'text'
+    },
+    read: {
+        type: Boolean,
+        default: false
+    },
     time: {
         type: Date,
         default: new Date()
     }
 })
 
-
 export const chatSchema = new Schema({
-    id: Types.ObjectId,
-    code: String,
+    code: {
+        type: String,
+        required: true
+    },
+    chatter: {
+        type: [Types.ObjectId],
+        ref: 'users',
+        required: [function () { return this.chatter.length >= 2 }, "Must be more than 2"]
+    },
     latest: {
         type: Date,
         default: new Date()

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="button" value="Submit" onclick="submi()">
+    <script>
+        function submi() {
+            fetch('/api/v1/connect', {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    authorization: 'Basic ' + btoa('Alex:39485')
+                }
+            })
+                .then(data => data.json())
+                .then(data => console.log(data))
+        }
+    </script>
+</body>
+
+</html>

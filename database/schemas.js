@@ -13,6 +13,10 @@ export const userSchema = new Schema({
         type: String,
         required: true
     },
+    email: {
+        type: String,
+        default: ""
+    },
     uri: String,
     image: String,
     tokkens: [{

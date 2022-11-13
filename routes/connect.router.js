@@ -5,6 +5,6 @@ import * as fx from "../functions/index.js";
 
 const router = Router()
 router.use(fx.allowCredentialHeaders)
-router.post('/', passport.authenticate('basic', { session: true }), connectUser)
+router.post('/', passport.authenticate('basic', { session: true, failureMessage: "User Not" }), connectUser)
 
 export default router

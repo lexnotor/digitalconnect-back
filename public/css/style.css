@@ -1,0 +1,42 @@
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+form {
+    width: 300px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 1em;
+    padding: 0.2em;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.input-group input {
+    width: 100%;
+    border: 0.5px solid grey;
+    padding: 0.8em;
+    border-radius: 5px;
+    outline: none;
+}
+
+form input[type='button'] {
+    width: fit-content;
+    align-self: center;
+    padding: 10px 15px;
+    border: 0px;
+    border-radius: 6px;
+    background-color: rgb(62, 141, 201);
+    color: white;
+}

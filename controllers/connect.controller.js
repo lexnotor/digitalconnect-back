@@ -4,11 +4,23 @@ import passport from "passport";
 import { BasicStrategy } from "passport-http";
 import { userSchema } from "../database/schemas.js";
 
-const contacts = mongoose.model('users', userSchema);
+const users = mongoose.model('users', userSchema);
 
-passport.use(new BasicStrategy((userid, password, done) => {
-    console.log({ userid, password });
-    return done(null, { username: 'alex', id: '234' })
+passport.use(new BasicStrategy(async (username, password, done) => {
+    console.log({ username, password });
+    /**
+     * @type {mongoose.Document<userSchema>}
+     */
+    const response = await (users.findOne({
+        $or: [
+            { username, password },
+            { email: username, password }
+        ]
+    }, { email: 1, nom: 1, username: 1, uri: 1, prenom: 1 }).exec())
+
+    if (response)
+        return done(null, { ...response })
+    else return done(null, null)
 }))
 
 passport.serializeUser((user, done) => {

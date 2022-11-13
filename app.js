@@ -10,6 +10,14 @@ import usersrouter from './routes/users.router.js';
 
 const app = e();
 
+// add ejs view engine
+app
+    .set('view engine', 'ejs')
+    .set('views', 'views')
+
+// server static file
+app.use(e.static('public'))
+
 // parse request body
 app.use(e.urlencoded({ extended: false }))
 
@@ -19,8 +27,8 @@ app.use(fx.allowCorsOrigin);
 app.options(/.*/, fx.allowMethodsHeaders);
 
 // Login page render
-app.get('/index', (req, res) => {
-    fs.createReadStream('./index.html').pipe(res)
+app.get('/login', (_, res) => {
+    res.render('login');
 })
 
 // Add passport session authentificator

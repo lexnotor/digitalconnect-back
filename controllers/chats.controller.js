@@ -13,8 +13,7 @@ const users = mongoose.model('users', userSchema);
  */
 export const getConversations = async (req, res) => {
     const userChat = await users.findOne({
-        _id: Types.ObjectId(req.params.user),
-        code: req.body.code
+        _id: new Types.ObjectId(req.user.id)
     }, { conversations: 1 }).exec()
     res.json(userChat)
 };

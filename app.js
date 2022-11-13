@@ -27,8 +27,9 @@ app.use(fx.allowCorsOrigin);
 app.options(/.*/, fx.allowMethodsHeaders);
 
 // Login page render
-app.get('/login', (_, res) => {
-    res.render('login');
+app.get('/login', (req, res) => {
+    console.log(req.query);
+    res.render('login', { uid: req.query.uid || '0' });
 })
 
 // Add passport session authentificator

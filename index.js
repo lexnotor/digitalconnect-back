@@ -1,7 +1,8 @@
-import dotenv from 'dotenv'
-import app from './app.js'
-import http from 'http'
+import dotenv from 'dotenv';
+import http from 'http';
 import mongoose from 'mongoose';
+import { Server as IOServer, Socket } from 'socket.io';
+import app from './app.js';
 
 dotenv.config()
 
@@ -16,6 +17,22 @@ await mongoose.connect(process.env.MONGODB_URI)
 
 // if connection success, create server from express one
 const server = http.createServer(app)
+
+// start WebSocket (Socket.Io)
+const sockets = [];
+/**
+ * @type {{uid: String, s: Socket}[]}
+ */
+export const socket_uid = []
+const socket_io = new IOServer(server, { cors: { origin: '*' } });
+socket_io.on('connection', (s) => {
+    sockets.push(s);
+    s.on('disconnect', () => sockets.splice(sockets.indexOf(s), 1));
+    s.on('wait_user_connect', (uid) => {
+        socket_uid.push({ uid, s });
+        console.log(socket_uid);
+    })
+})
 
 // and then starting listerning
 const listernning = server.listen(process.env.PORT || 3000, () => {

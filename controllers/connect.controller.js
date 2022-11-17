@@ -56,3 +56,15 @@ passport.deserializeUser((user, done) => {
 export const connectUser = (req, res) => {
     res.json({ ...req.user, message: 'connected' })
 }
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ */
+export const disConnectUser = (req, res) => {
+    req.session.destroy((err) => {
+        res.json({ message: 'Succefully disconnected' })
+    })
+}
+

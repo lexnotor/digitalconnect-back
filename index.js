@@ -21,7 +21,7 @@ const server = http.createServer(app)
 // start WebSocket (Socket.Io)
 const sockets = [];
 /**
- * @type {{uid: String, s: Socket}[]}
+ * @type {{uid: String, s: Socket, user_id: String}[]}
  */
 export const socket_uid = []
 const socket_io = new IOServer(server, { cors: { origin: '*' } });

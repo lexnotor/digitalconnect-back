@@ -50,7 +50,7 @@ export const groupeMessageSchema = new Schema({
     }],
     time: {
         type: Date,
-        default: new Date()
+        default: () => new Date()
     }
 })
 
@@ -62,7 +62,7 @@ export const groupSchema = new Schema({
     }],
     latest: {
         type: Date,
-        default: new Date()
+        default: () => new Date()
     },
     chats: [groupeMessageSchema]
 });
@@ -84,7 +84,7 @@ export const chatMessageSchema = new Schema({
     },
     time: {
         type: Date,
-        default: new Date()
+        default: () => new Date()
     }
 })
 
@@ -100,7 +100,7 @@ export const chatSchema = new Schema({
     },
     latest: {
         type: Date,
-        default: new Date()
+        default: () => new Date()
     },
     messages: [chatMessageSchema]
 })

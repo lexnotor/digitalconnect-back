@@ -1,6 +1,7 @@
 import e from "express";
 import mongoose, { Types } from "mongoose";
 import { chatSchema, userSchema } from "../database/schemas.js";
+import { socket_uid } from "../index.js";
 
 const conversations = mongoose.model('conversations', chatSchema);
 const users = mongoose.model('users', userSchema);
@@ -42,7 +43,6 @@ export const getConversation = (req, res) => {
  * @param {e.Response} res 
  */
 export const sendMessage = async (req, res) => {
-    console.log(req.user.id, req.body);
     // Verify if it is new conversation
     const conversation = await conversations.findOne({
         chatter: { $all: [req.user.id, req.body.he] }
@@ -62,6 +62,11 @@ export const sendMessage = async (req, res) => {
                 latest: new Date()
             }
         }).exec();
+        const allReceverSocket = socket_uid.filter(elm => elm.user_id == req.body.he);
+        allReceverSocket.forEach(receverSocket => {
+            receverSocket.s.emit("newUnreadMessage");
+        })
+
         res.json({ message: "message add" })
     } else {
         // if it's new conversation,
@@ -89,7 +94,11 @@ export const sendMessage = async (req, res) => {
             }, {
                 $push: { conversations: newChat.id }
             }).exec();
-
+            const allReceverSocket = socket_uid.filter(elm => elm.user_id == req.body.he);
+            socket_uid.forEach(elm => console.log(elm.user_id));
+            allReceverSocket.forEach(receverSocket => {
+                receverSocket.s.emit("newUnreadMessage");
+            })
             res.json({ message: "conversations create, message saved" })
         } else {
             // if one or both are not found, just return

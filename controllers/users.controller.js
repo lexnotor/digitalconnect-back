@@ -1,6 +1,7 @@
 import e from "express"
 import mongoose from "mongoose"
 import { userSchema } from "../database/schemas.js";
+import { socket_uid } from "../index.js";
 
 const users = mongoose.model('users', userSchema);
 
@@ -46,7 +47,8 @@ export const getMyInfo = async (req, res) => {
     const me = await users.findOne({
         _id: req.user.id
     }, { password: 0, tokkens: 0, }).exec()
-
+    const userSocket = socket_uid.find(elm => elm.uid == req.query.uid);
+    if (userSocket && !userSocket.user_id) userSocket.user_id = req.user.id
     res.status(200).json({
         id: me.id,
         image: me.image || 'none',

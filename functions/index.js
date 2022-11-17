@@ -10,7 +10,7 @@ import session from 'express-session'
  */
 export const ifUserLogin = (req, res, next) => {
     if (req.user) next();
-    else res.json({ message: 'please login' })
+    else res.status(401).json({ message: 'please login' })
 }
 
 /**
@@ -61,8 +61,7 @@ export const addSessionSupport = (_, res, next) => {
                 dir: './var',
             }),
             cookie: {
-                maxAge: 1000 * 60 * 60 * 5,
-                sameSite: 'none',
+                maxAge: 1000 * 60 * 60 * 5
             }
         })
     )

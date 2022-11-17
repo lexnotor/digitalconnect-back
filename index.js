@@ -30,7 +30,7 @@ socket_io.on('connection', (s) => {
     s.on('disconnect', () => sockets.splice(sockets.indexOf(s), 1));
     s.on('wait_user_connect', (uid) => {
         socket_uid.push({ uid, s });
-        console.log(socket_uid);
+
     })
 })
 

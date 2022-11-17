@@ -6,5 +6,6 @@ const router = Router()
 router.use(fx.allowCredentialHeaders)
 router.get('/contacts', fx.ifUserLogin, user.getContact)
 router.get('/createuser', fx.ifUserLogin, user.createUser)
+router.get('/me', fx.ifUserLogin, user.getMyInfo)
 
 export default router

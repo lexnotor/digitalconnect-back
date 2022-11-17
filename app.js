@@ -28,7 +28,6 @@ app.options(/.*/, fx.allowMethodsHeaders);
 
 // Login page render
 app.get('/login', (req, res) => {
-    console.log(req.query);
     res.render('login', { uid: req.query.uid || '0' });
 })
 

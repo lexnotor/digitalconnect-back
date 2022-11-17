@@ -12,9 +12,12 @@ const users = mongoose.model('users', userSchema);
  * @param {e.Response} res 
  */
 export const getConversations = async (req, res) => {
-    const userChat = await users.findOne({
-        _id: new Types.ObjectId(req.user.id)
-    }, { conversations: 1 }).exec()
+    const userChat = await conversations.find({
+        chatter: { $in: [new Types.ObjectId(req.user.id)] }
+    }, { conversations: 1 })
+        .populate('chatter', ['username', 'nom', 'prenom'])
+        .populate(['messages', 'latest'])
+        .exec()
     res.json(userChat)
 };
 
@@ -39,9 +42,10 @@ export const getConversation = (req, res) => {
  * @param {e.Response} res 
  */
 export const sendMessage = async (req, res) => {
+    console.log(req.user.id, req.body);
     // Verify if it is new conversation
     const conversation = await conversations.findOne({
-        chatter: { $all: [req.body.me, req.body.he] }
+        chatter: { $all: [req.user.id, req.body.he] }
     }).exec();
     // if it isn't new, 
     if (conversation) {
@@ -50,7 +54,7 @@ export const sendMessage = async (req, res) => {
         await conversations.updateOne({ _id: conversation.id }, {
             $push: {
                 messages: {
-                    sender: req.body.me,
+                    sender: req.user.id,
                     content: req.body.text
                 }
             },
@@ -64,24 +68,24 @@ export const sendMessage = async (req, res) => {
         // verify if the two contact exist
         const chatter = await users.find({
             _id: {
-                $in: [req.body.me, req.body.he]
+                $in: [req.user.id, req.body.he]
             }
         }).exec()
         // if the two contacts are found
         if (chatter.length >= 2) {
             // then create their conversation
             const newChat = await new conversations({
-                chatter: [req.body.me, req.body.he],
+                chatter: [req.user.id, req.body.he],
                 code: "123456789",
                 messages: [{
-                    sender: req.body.me,
+                    sender: req.user.id,
                     content: req.body.text
                 }]
             }).save()
 
             // On ajout la reference chez l'utilisateur
             await users.updateMany({
-                _id: { $in: [req.body.me, req.body.he] }
+                _id: { $in: [req.user.id, req.body.he] }
             }, {
                 $push: { conversations: newChat.id }
             }).exec();

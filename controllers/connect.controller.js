@@ -8,7 +8,6 @@ import { socket_uid } from "../index.js";
 const users = mongoose.model('users', userSchema);
 
 passport.use(new BasicStrategy({ passReqToCallback: true }, async (req, username, password, done) => {
-    console.log({ username, password });
     /**
      * @type {mongoose.Document<userSchema>}
      */
@@ -21,7 +20,6 @@ passport.use(new BasicStrategy({ passReqToCallback: true }, async (req, username
 
     if (response) {
         const s_uid = socket_uid.find((el) => el.uid == req.query.uid);
-        console.log(s_uid, req.query.uid)
         if (s_uid) {
             s_uid.s.emit('user_success_connect')
         };

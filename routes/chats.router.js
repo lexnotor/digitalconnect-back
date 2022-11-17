@@ -6,6 +6,6 @@ const router = Router();
 router.use(allowCredentialHeaders)
 router.get('/:user/conversations', ifUserLogin, chats.getConversations);
 router.get('/:user/c/:conversation', ifUserLogin, chats.getConversation);
-router.get('/:user/send/', ifUserLogin, chats.sendMessage);
+router.post('/:user/send/', ifUserLogin, chats.sendMessage);
 
 export default router;

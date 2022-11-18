@@ -26,11 +26,14 @@ const sockets = [];
 export const socket_uid = []
 const socket_io = new IOServer(server, { cors: { origin: '*' } });
 socket_io.on('connection', (s) => {
+    console.log("Nombre de socket", sockets.length, socket_uid.length);
     sockets.push(s);
-    s.on('disconnect', () => sockets.splice(sockets.indexOf(s), 1));
+    s.on('disconnect', () => {
+        (sockets.indexOf(s) != -1) && sockets.splice(sockets.indexOf(s), 1);
+        (socket_uid.findIndex(elm => elm.s == s) != -1) && socket_uid.splice(socket_uid.findIndex(elm => elm.s == s))
+    });
     s.on('wait_user_connect', (uid) => {
         socket_uid.push({ uid, s });
-
     })
 })
 

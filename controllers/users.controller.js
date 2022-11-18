@@ -27,15 +27,23 @@ export const getContact = (req, res) => {
  * @param {e.Response} res 
  */
 export const createUser = (req, res) => {
+    if (req.body.username && req.body.psw && req.body.nom && req.body.prenom && req.body.email);
+    else return res.status(405).json({ message: "Complete all Fields" });
+
+    if (req.body.username.trim().length && req.body.psw.trim().length && req.body.nom.trim().length && req.body.prenom.trim().length && req.body.email.trim().length);
+    else return res.status(402).json({ message: "Complete all Fields" });
+
+    if (!/^[a-zA-Z0-9._]{5,}@[a-z0-9]{3,}\.[a-z]{2,10}$/.test(req.body.email.trim())) return res.status(403).json({ message: "Invalid Email" });
+
     new users({
         username: req.body.username,
         password: req.body.psw,
         nom: req.body.nom,
         prenom: req.body.prenom,
+        email: req.body.email
     }).save()
-        .then(resultat => console.log(resultat))
-        .catch(err => console.log(err));
-    res.json({})
+        .then(resultat => res.status(201).json({ message: "Utilisateur créé" }))
+        .catch(err => res.status(201).json({ message: "Impossible de créer un utilisateur" }));
 }
 
 /**

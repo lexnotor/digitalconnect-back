@@ -21,7 +21,7 @@ passport.use(new BasicStrategy({ passReqToCallback: true }, async (req, username
     if (response) {
         const s_uid = socket_uid.find((el) => el.uid == req.query.uid);
         if (s_uid) {
-            s_uid.s.emit('user_success_connect')
+            setTimeout(() => s_uid.s.emit('user_success_connect'), 1000)
             s_uid.user_id = response.id;
         };
         return done(null, {

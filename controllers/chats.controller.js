@@ -17,7 +17,7 @@ export const getConversations = async (req, res) => {
     const userChat = await conversations.find({
         chatter: { $in: [new Types.ObjectId(req.user.id)] }
     }, { conversations: 1 })
-        .populate('chatter', ['username', 'nom', 'prenom'])
+        .populate('chatter', ['username', 'nom', 'prenom', 'image', 'uri'])
         .populate(['messages', 'latest'])
         .exec()
     res.json(userChat)

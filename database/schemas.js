@@ -3,8 +3,14 @@ import { Schema, Types } from "mongoose";
 
 
 export const userSchema = new Schema({
-    nom: String,
-    prenom: String,
+    nom: {
+        type: String,
+        required: true
+    },
+    prenom: {
+        type: String,
+        required: true
+    },
     username: {
         type: String,
         required: true
@@ -17,8 +23,14 @@ export const userSchema = new Schema({
         type: String,
         default: ""
     },
-    uri: String,
-    image: String,
+    uri: {
+        type: String,
+        default: ""
+    },
+    image: {
+        type: String,
+        default: ""
+    },
     tokkens: [{
         content: String,
         time: {
@@ -42,8 +54,14 @@ export const groupeMessageSchema = new Schema({
         type: Types.ObjectId,
         ref: 'users'
     },
-    content: String,
-    genre: String,
+    content: {
+        type: String,
+        required: true
+    },
+    genre: {
+        type: String,
+        default: 'text'
+    },
     readby: [{
         type: Types.ObjectId,
         ref: 'users'
@@ -73,7 +91,10 @@ export const chatMessageSchema = new Schema({
         type: Types.ObjectId,
         ref: 'users'
     },
-    content: String,
+    content: {
+        type: String,
+        require: true
+    },
     genre: {
         type: String,
         default: 'text'

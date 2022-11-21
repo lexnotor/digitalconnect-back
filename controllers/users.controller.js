@@ -1,7 +1,8 @@
-import e from "express"
+import e, { response } from "express"
 import mongoose from "mongoose"
 import { userSchema } from "../database/schemas.js";
 import { socket_uid } from "../index.js";
+import { v2 as cloudinaryV2 } from "cloudinary";
 
 const users = mongoose.model('users', userSchema);
 
@@ -12,7 +13,7 @@ const users = mongoose.model('users', userSchema);
  */
 export const getContact = (req, res) => {
     users.find({}, {
-        nom: 1, prenom: 1, username: 1, email: 1, uri: 1
+        nom: 1, prenom: 1, username: 1, email: 1, uri: 1, image: 1
     }).exec()
         .then(resultat => {
             res.json(resultat)
@@ -54,9 +55,11 @@ export const createUser = (req, res) => {
 export const getMyInfo = async (req, res) => {
     const me = await users.findOne({
         _id: req.user.id
-    }, { password: 0, tokkens: 0, }).exec()
-    const userSocket = socket_uid.find(elm => elm.uid == req.query.uid);
-    if (userSocket && !userSocket.user_id) userSocket.user_id = req.user.id
+    }, { password: 0, tokkens: 0, }).exec();
+    if (req.query.uid) {
+        const userSocket = socket_uid.find(elm => elm.uid == req.query.uid);
+        if (userSocket && !userSocket.user_id) userSocket.user_id = req.user.id;
+    }
     res.status(200).json({
         id: me.id,
         image: me.image || 'none',
@@ -67,5 +70,31 @@ export const getMyInfo = async (req, res) => {
         groupes: me.groupes || [],
         conversation: me.conversations || []
     })
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ */
+export const changePicture = async (req, res) => {
+    if (req.file) {
+        const file = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`
+        const apiResponse = await cloudinaryV2.uploader.upload(file);
+        if (apiResponse.url) {
+            const doc = await users.updateOne({
+                _id: req.user.id
+            }, {
+                $set: {
+                    image: apiResponse.url
+                }
+            }).exec();
+        } else {
+            res.status(403).json({ message: "Erreur apiResponse" })
+        }
+
+    } else {
+        res.status(403).json({ message: "Please provide a file" })
+    }
 }
 

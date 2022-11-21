@@ -2,6 +2,7 @@ import e from "express";
 import mongoose, { Types } from "mongoose";
 import { chatSchema, userSchema } from "../database/schemas.js";
 import { socket_uid } from "../index.js";
+import { v2 as cloudinaryV2 } from "cloudinary";
 
 const conversations = mongoose.model('conversations', chatSchema);
 const users = mongoose.model('users', userSchema);
@@ -43,6 +44,16 @@ export const getConversation = (req, res) => {
  * @param {e.Response} res 
  */
 export const sendMessage = async (req, res) => {
+    console.log();// icic
+    let cloudFile = null;
+    if (req.file) {
+        try {
+            const base64_encoded = req.file.buffer.toString("base64")
+            cloudFile = await cloudinaryV2.uploader.upload(`data:${req.file.mimetype};base64,${base64_encoded}`);
+        } catch (error) {
+            cloudFile = null
+        }
+    }
     // Verify if it is new conversation
     const conversation = await conversations.findOne({
         chatter: { $all: [req.user.id, req.body.he] }
@@ -55,7 +66,8 @@ export const sendMessage = async (req, res) => {
             $push: {
                 messages: {
                     sender: req.user.id,
-                    content: req.body.text
+                    content: cloudFile ? cloudFile.url : req.body.text,
+                    genre: cloudFile ? "image" : "text"
                 }
             },
             $set: {
@@ -84,7 +96,8 @@ export const sendMessage = async (req, res) => {
                 code: "123456789",
                 messages: [{
                     sender: req.user.id,
-                    content: req.body.text
+                    content: cloudFile ? cloudFile.url : req.body.text,
+                    genre: cloudFile ? "image" : "text"
                 }]
             }).save()
 
@@ -106,3 +119,4 @@ export const sendMessage = async (req, res) => {
         }
     }
 };
+

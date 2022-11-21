@@ -3,8 +3,17 @@ import http from 'http';
 import mongoose from 'mongoose';
 import { Server as IOServer, Socket } from 'socket.io';
 import app from './app.js';
+import cloudinary from 'cloudinary'
+
 
 dotenv.config()
+
+// configure cloudinary
+cloudinary.v2.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
+});
 
 // connection to database ...
 await mongoose.connect(process.env.MONGODB_URI)
@@ -26,7 +35,6 @@ const sockets = [];
 export const socket_uid = []
 const socket_io = new IOServer(server, { cors: { origin: '*' } });
 socket_io.on('connection', (s) => {
-    console.log("Nombre de socket", sockets.length, socket_uid.length);
     sockets.push(s);
     s.on('disconnect', () => {
         (sockets.indexOf(s) != -1) && sockets.splice(sockets.indexOf(s), 1);
